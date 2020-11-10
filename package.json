@@ -1,6 +1,6 @@
 {
   "name": "@ithreat/toast-provider",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "UI-agnostic Toast component provider",
   "author": "japhy-",
   "license": "MIT",
