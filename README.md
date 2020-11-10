@@ -36,7 +36,7 @@ const Toast = ({kind, title, subtitle, caption, timeout, onCloseButtonClick, cla
 
 const App = () => {
   return (
-    <ToastProvider component={(props) => <Toast {...props}/>}>
+    <ToastProvider component={(props) => <Toast {...props} />} >
       <App2/>
     </ToastProvider>
   )
@@ -55,7 +55,8 @@ const App2 = () => {
   </div>);
 };
 
-export default App;```
+export default App;
+```
 
 ## License
 
