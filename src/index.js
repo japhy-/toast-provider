@@ -1,4 +1,4 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 
 /**
@@ -26,28 +26,30 @@ export const ToastProvider = ({component, children}) => {
     const [ timeout, setTimeout ] = useState();
     const [ onCloseButtonClick, setOnCloseButtonClick ] = useState();
     const [ className, setClassName ] = useState();
-
-    const toast = (props) => {
-        toast.reset();
-
-        if (props) {
-            const { kind, title, subtitle, caption, timeout, onCloseButtonClick, className } = props;
-
-            toast
-                .kind(kind)
-                .title(title)
-                .subtitle(subtitle)
-                .caption(caption)
-                .timeout(timeout)
-                .onCloseButtonClick(onCloseButtonClick)
-                .className(className)
-                .show();
+    
+    const toastObjRef = useRef(
+        (props) => {
+            toastObjRef.current.reset();
+    
+            if (props) {
+                const { kind, title, subtitle, caption, timeout, onCloseButtonClick, className } = props;
+    
+                toastObjRef.current
+                    .kind(kind)
+                    .title(title)
+                    .subtitle(subtitle)
+                    .caption(caption)
+                    .timeout(timeout)
+                    .onCloseButtonClick(onCloseButtonClick)
+                    .className(className)
+                    .show();
+            }
+    
+            return toastObjRef.current;
         }
+    );
 
-        return toast;
-    };
-
-    const wrap = (func) => (...args) => { setActive(false); func(...args); return toast; };
+    const wrap = (func) => (...args) => { setActive(false); func(...args); return toastObjRef.current;};    // return toastObjeRef.current;
 
     const setArgs = (func) => (...args) => {
         func();
@@ -62,7 +64,7 @@ export const ToastProvider = ({component, children}) => {
      * Whether the Toast is active (being displayed).
      * @memberof ToastContext#
      */
-    toast.active = active;
+    toastObjRef.current.active = active;
 
     /**
      * Shows the Toast.
@@ -71,7 +73,7 @@ export const ToastProvider = ({component, children}) => {
      * @memberof ToastContext#
      * @returns toast
      */
-    toast.show = wrap(() => setActive(true));
+    toastObjRef.current.show = wrap(() => setActive(true));
 
     /**
      * Resets the Toast (hides it and clears its attributes).
@@ -80,7 +82,7 @@ export const ToastProvider = ({component, children}) => {
      * @memberof ToastContext#
      * @returns toast
      */
-    toast.reset = wrap(() => {
+    toastObjRef.current.reset = wrap(() => {
         setActive(false);
         setKind();
         setTitle();
@@ -98,7 +100,7 @@ export const ToastProvider = ({component, children}) => {
      * @memberof ToastContext#
      * @returns toast
      */
-    toast.error = wrap(setArgs(() => setKind('error')));
+    toastObjRef.current.error = wrap(setArgs(() => setKind('error')));
 
     /**
      * Shortcut for `toast.kind('info')`.
@@ -107,7 +109,7 @@ export const ToastProvider = ({component, children}) => {
      * @memberof ToastContext#
      * @returns toast
      */
-    toast.info = wrap(setArgs(() => setKind('info')));
+    toastObjRef.current.info = wrap(setArgs(() => setKind('info')));
 
     /**
      * Shortcut for `toast.kind('success')`.
@@ -116,7 +118,7 @@ export const ToastProvider = ({component, children}) => {
      * @memberof ToastContext#
      * @returns toast
      */
-    toast.success = wrap(setArgs(() => setKind('success')));
+    toastObjRef.current.success = wrap(setArgs(() => setKind('success')));
 
     /**
      * Shortcut for `toast.kind('warning')`.
@@ -125,7 +127,7 @@ export const ToastProvider = ({component, children}) => {
      * @memberof ToastContext#
      * @returns toast
      */
-    toast.warning = wrap(setArgs(() => setKind('warning')));
+    toastObjRef.current.warning = wrap(setArgs(() => setKind('warning')));
 
     /**
      * Sets the kind (type) of the Toast.
@@ -135,7 +137,7 @@ export const ToastProvider = ({component, children}) => {
      * @param {string} kind error, info, success, warning
      * @returns toast
      */
-    toast.kind = wrap((v) => setKind(v === undefined ? v : v.toString()));
+    toastObjRef.current.kind = wrap((v) => setKind(v === undefined ? v : v.toString()));
 
     /**
      * Sets the title of the Toast.
@@ -145,7 +147,7 @@ export const ToastProvider = ({component, children}) => {
      * @param {string} title
      * @returns toast
      */
-    toast.title = wrap((v) => setTitle(v === undefined ? v : v.toString()));
+    toastObjRef.current.title = wrap((v) => setTitle(v === undefined ? v : v.toString()));
 
     /**
      * Sets the subtitle of the Toast.
@@ -155,7 +157,7 @@ export const ToastProvider = ({component, children}) => {
      * @param {string} subtitle
      * @returns toast
      */
-    toast.subtitle = wrap((v) => setSubtitle(v === undefined ? v : v.toString()));
+    toastObjRef.current.subtitle = wrap((v) => setSubtitle(v === undefined ? v : v.toString()));
 
     /**
      * Sets the caption (the body or content) of the Toast.
@@ -165,7 +167,7 @@ export const ToastProvider = ({component, children}) => {
      * @param {string} caption
      * @returns toast
      */
-    toast.caption = wrap((v) => setCaption(v === undefined ? v : v.toString()));
+    toastObjRef.current.caption = wrap((v) => setCaption(v === undefined ? v : v.toString()));
 
     /**
      * Sets the timeout (in milliseconds) of the Toast.
@@ -175,7 +177,7 @@ export const ToastProvider = ({component, children}) => {
      * @param {int} ms
      * @returns toast
      */
-    toast.timeout = wrap((v) => setTimeout(parseInt(v)));
+    toastObjRef.current.timeout = wrap((v) => setTimeout(parseInt(v)));
 
     /**
      * Sets the `onCloseButtonClick` handler of the Toast.
@@ -185,7 +187,7 @@ export const ToastProvider = ({component, children}) => {
      * @param {func} handler
      * @returns toast
      */
-    toast.onCloseButtonClick = wrap((v) => setOnCloseButtonClick(v));
+    toastObjRef.current.onCloseButtonClick = wrap((v) => setOnCloseButtonClick(v));
 
     /**
      * Sets the class of the Toast.
@@ -195,12 +197,12 @@ export const ToastProvider = ({component, children}) => {
      * @param {string} class
      * @returns toast
      */
-    toast.className = wrap((v) => setClassName(v));
+    toastObjRef.current.className = wrap((v) => setClassName(v));
 
     return (
-        <ToastContext.Provider value={toast}>
+        <ToastContext.Provider value={toastObjRef.current}>
             {children}
-            {active && component({ kind, title, subtitle, caption, timeout, onCloseButtonClick: (e) => { onCloseButtonClick && onCloseButtonClick(e); toast.reset(); }, className })}
+            {active && component({ kind, title, subtitle, caption, timeout, onCloseButtonClick: (e) => { onCloseButtonClick && onCloseButtonClick(e); toastObjRef.current.reset(); }, className })}
         </ToastContext.Provider>
     );
 };
